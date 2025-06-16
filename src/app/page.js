@@ -12,6 +12,7 @@ import {
   useKeyboardControls,
 } from "@react-three/drei";
 
+
 const PRIZES = [
   { name: "熊熊娃娃", icon: "🧸" },
   { name: "棒棒糖", icon: "🍭" },
@@ -46,7 +47,7 @@ function ClawModel({ clawPos, targetY, setClawPos }) {
     });
   });
 
-  return <primitive ref={clawRef} object={scene} scale={0.6} />;
+  return <primitive ref={clawRef} object={scene} scale={1.3} />;
 }
 
 function ClawCamera({ clawPos, setClawPos }) {
@@ -78,16 +79,50 @@ function Popup({ prize }) {
   );
 }
 
-function Instructions() {
+export function Instructions() {
+  const [open, setOpen] = useState(true);
+
   return (
-    <div className="absolute top-4 right-4 max-w-xs bg-white/90 backdrop-blur-sm p-3 rounded-lg text-sm leading-relaxed shadow-md z-50">
-      <p className="font-semibold mb-1">🎮 遊戲玩法</p>
-      <ul className="list-disc list-inside space-y-1">
-        <li>使用 <strong>W/A/S/D</strong> 或方向鍵移動爪子</li>
-        <li>按 <strong>Space</strong> 下降抓娃娃</li>
-        <li>隨機獲得三種獎品之一，或失敗</li>
-        <li>可無限次嘗試！</li>
-      </ul>
+    <div className="absolute top-6 right-6 z-50">
+      <div className="w-full min-w-[270px] shadow-lg">
+        <button
+          onClick={() => setOpen(o => !o)}
+          className={`
+            w-full flex items-center gap-2 px-4 py-2
+            bg-white/95 font-bold text-base
+            rounded-t-2xl
+            ${open ? "" : "rounded-b-2xl"}
+            border-b border-gray-200
+            transition-all
+          `}
+          style={{
+            boxShadow: open ? "0 4px 24px #a89bf744" : "0 2px 12px #a89bf733"
+          }}
+        >
+          <span className="text-xl mr-1">🎮</span>
+          遊戲玩法
+          <span className="ml-auto text-xl select-none">{open ? "▲" : "▼"}</span>
+        </button>
+        <div
+          className={`
+            bg-white/95
+            rounded-b-2xl
+            overflow-hidden transition-all duration-400
+            ${open ? "max-h-96 py-4 px-6 opacity-100" : "max-h-0 py-0 px-6 opacity-0"}
+            border-t-0
+          `}
+          style={{
+            backdropFilter: "blur(4px)",
+            transition: "all .5s cubic-bezier(.4,0,.2,1)"
+          }}
+        >
+          <ul className="space-y-3 font-medium text-gray-700 text-base">
+            <li><span className="inline-block w-5 text-pink-500">•</span>使用 <b>W/A/S/D</b> 或方向鍵移動爪子</li>
+            <li><span className="inline-block w-5 text-pink-500">•</span>按 <b>Space</b> 下降抓娃娃</li>
+            <li><span className="inline-block w-5 text-pink-500">•</span>隨機獲得三種獎品 <span className="ml-2 text-lg">🧸🍭🦆</span></li>
+          </ul>
+        </div>
+      </div>
     </div>
   );
 }
@@ -143,6 +178,8 @@ export default function Home() {
     <div
       className="w-full h-screen relative bg-center bg-cover"
       style={{ backgroundImage: "url('/arcade-bg.png')" }}
+
+      
     >
       <Popup prize={popupPrize} />
       <Instructions />
@@ -163,7 +200,7 @@ export default function Home() {
           <spotLight position={[10,10,10]} angle={0.15} penumbra={1} intensity={Math.PI} />
           <pointLight position={[-10,-10,-10]} intensity={Math.PI} />
 
-          <group position={[0, -1.0, 0]}> 
+          <group position={[0.1, -2.5, -1]}> 
             <Suspense fallback={null}>
               <ClawModel clawPos={clawPos} targetY={targetY} setClawPos={setClawPos} />
             </Suspense>
